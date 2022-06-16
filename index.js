@@ -30,11 +30,15 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-mongoose.connect("mongodb://localhost:27017/secretDB", {
-  useNewUrlParser: true,
-});
+mongoose.connect(
+  "mongodb+srv://admin-kunal:ktdt2001!@cluster0.8p4vaoe.mongodb.net/secretDB",
+  {
+    useNewUrlParser: true,
+  }
+);
 mongoose.set("useCreateIndex", true);
 const userSchema = new mongoose.Schema({
+  username: String,
   email: String,
   password: String,
   googleid: String,
@@ -65,9 +69,13 @@ passport.use(
       passReqToCallback: true,
     },
     function (request, accessToken, refreshToken, profile, done) {
-      User.findOrCreate({ googleId: profile.id }, function (err, user) {
-        return done(err, user);
-      });
+      console.log(profile);
+      User.findOrCreate(
+        { googleid: profile.id, username: profile.given_name },
+        function (err, user) {
+          return done(err, user);
+        }
+      );
     }
   )
 );
